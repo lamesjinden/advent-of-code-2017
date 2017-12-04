@@ -20,18 +20,18 @@
   (if (empty? numbers)
     0
     (let [numbers-normalized (concat numbers [(first numbers)])]
-      (:result 
-      (reduce (fn [m v]
-                   (if (nil? m)
+      (:result
+       (reduce (fn [m v]
+                 (if (nil? m)
+                   {:prev v
+                    :result 0}
+                   (if (not (= v (:prev m)))
                      {:prev v
-                      :result 0}
-                     (if (not (= v (:prev m)))
-                       {:prev v
-                        :result (:result m)}
-                       {:prev v
-                        :result (+ v (:result m))}
-                       )))
-                   nil numbers-normalized)))))
+                      :result (:result m)}
+                     {:prev v
+                      :result (+ v (:result m))}
+                     )))
+               nil numbers-normalized)))))
 
 (defn run-test
   [test-datum]
