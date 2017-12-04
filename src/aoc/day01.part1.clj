@@ -5,7 +5,7 @@
 
 (def test-data-2 { :input [1 1 1 1] :output 4 })
 
-(def test-data-3 { :input [1 2 3 4] :ouptut 0 })
+(def test-data-3 { :input [1 2 3 4] :output 0 })
 
 (def test-data-4 { :input [9 1 2 1 2 1 2 9] :output 9 })
 
