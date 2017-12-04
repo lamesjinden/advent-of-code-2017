@@ -18,7 +18,7 @@
 (defn reverse-captcha
   [numbers]
   (if (empty? numbers)
-    1
+    0
     (let [numbers-normalized (concat numbers [(first numbers)])]
       (:result 
       (reduce (fn [m v]
