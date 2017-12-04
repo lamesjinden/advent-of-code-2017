@@ -10,9 +10,9 @@
 (def test-data-4 { :input [9 1 2 1 2 1 2 9] :output 9 })
 
 (def tests
-  [test-data-1,
-   test-data-2,
-   test-data-3,
+  [test-data-1
+   test-data-2
+   test-data-3
    test-data-4])
 
 (defn reverse-captcha
