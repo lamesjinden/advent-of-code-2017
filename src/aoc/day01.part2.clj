@@ -51,7 +51,7 @@
 
 (defn get-input-data
   []
-  (->> (slurp "resources/day01.part1.input")
+  (->> (slurp "resources/day01.part2.input")
        (seq) ;;string to seq of chars
        (filter #(Character/isDigit %)) ;;strip newline
        (map str) ;;seq of chars to seq of strings
