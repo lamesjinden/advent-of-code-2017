@@ -1,7 +1,0 @@
-(ns aoc.day01)
-
-(def test-data-1 { :input 1122 :output 3 })
-(def test-data-2 { :input 1111 :output 4 })
-(def test-data-3 { :input 1234 :ouptut 0 })
-(def test-data-4 { :input 91212129 :output 9 })
-
