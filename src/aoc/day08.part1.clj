@@ -1,10 +1,18 @@
 (ns aoc.day08.part1
   (:require [clojure.string :as str]))
 
-(def sample-line "p inc -598 if fk < 3587")
-
 (def line-pattern #"(\w+) (\w+) (-?\d+) (.*)")
 (def predicate-pattern #"if (\w+) (==|!=|>|>=|<|<=) (-?\d+)")
+
+(def predicates {"==" (fn [atom arg] (= @atom arg))
+                 "!=" (fn [atom arg] (not (= @atom arg)))
+                 ">"  (fn [atom arg] (> @atom arg))
+                 ">=" (fn [atom arg] (>= @atom arg))
+                 "<"  (fn [atom arg] (< @atom arg))
+                 "<=" (fn [atom arg] (<= @atom arg))})
+
+(def operations {"inc" (fn [atom arg] (swap! atom #(+ % arg)))
+                 "dec" (fn [atom arg] (swap! atom #(- % arg)))})
 
 (defn parse-predicate
   [predicate]
@@ -13,7 +21,7 @@
       (throw (Exception. (str "failed to parse predicate: " predicate))))
     {:subject (get matching-groups 1)
      :operator (get matching-groups 2)
-     :argument (get matching-groups 3)}))
+     :argument (Integer/parseInt (get matching-groups 3))}))
 
 (defn parse-line
   [line]
@@ -22,7 +30,7 @@
       (throw (Exception. (str "failed to parse: " line))))
     {:register (get matching-groups 1)
      :operation (get matching-groups 2)
-     :value (get matching-groups 3)
+     :value (Integer/parseInt (get matching-groups 3))
      :predicate (parse-predicate (matching-groups 4))}))
 
 (defn get-input-data
@@ -36,23 +44,38 @@
   (->> instructions
        (map (fn [instruction]
               {(get instruction :register)
-               (atom 0)}))))
+               (atom 0)}))
+       (into {})))
 
 (defn predicate-true?
   [predicate environment]
-  true)
+  (let [subject-name (get predicate :subject)
+        subject-value (get environment subject-name)
+        operator-name (get predicate :operator)
+        operator-fn (get predicates operator-name)
+        argument-value (get predicate :argument)]
+    (operator-fn subject-value argument-value)))
 
 (defn apply-instruction
-  [instruction environment])
+  [instruction environment]
+  (let [register-name (get instruction :register)
+        operation-name (get instruction :operation)
+        operation-value (get instruction :value)
+        operation-fn (get operations operation-name)]
+    (operation-fn (get environment register-name) operation-value)))
 
 (defn evaluate
   [instructions]
   (let [environment (create-environment instructions)]
     (doseq [instruction instructions]
       (when (predicate-true? (get instruction :predicate) environment)
-          apply-instruction))
-    (key (apply max-key #(deref (val %)) environment))))
+        (apply-instruction instruction environment)))
+    environment))
 
 (defn run
   []
-  (evaluate (get-input-data)))
+  (deref
+    (val
+      (apply max-key
+             #(deref (val %))
+             (evaluate (get-input-data))))))
